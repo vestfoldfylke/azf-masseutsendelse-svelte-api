@@ -1,5 +1,6 @@
 const { logger } = require("@vestfoldfylke/loglady");
-const azureAd = require("./lib/azuread");
+const HTTPError = require("../vtfk-errors/httperror");
+const readPrincipal = require("./lib/azuread");
 
 const testUser = {
   name: "timetrigger",
@@ -9,9 +10,8 @@ const testUser = {
 };
 
 /**
- * Auth's the request
+ * Auth's the request using the Easy Auth X-MS-CLIENT-PRINCIPAL header.
  * @param {object} req Azure function request
- * @returns
  */
 async function auth(req) {
   if (process.env.NODE_ENV?.toLowerCase() === "test") {
@@ -19,13 +19,13 @@ async function auth(req) {
     return testUser;
   }
 
-  const authValue = req.headers.get("authorization") || req.headers.get("Authorization");
-  if (!authValue) {
+  const principalHeader = req.headers.get("x-ms-client-principal");
+  if (!principalHeader) {
     if (process.env.NODE_ENV?.toLowerCase() !== "development") {
-      throw new Error("No authorization header was provided");
+      throw new HTTPError(401, "X-MS-CLIENT-PRINCIPAL header is missing");
     }
 
-    // Return a dev user in development mode since no auth header is provided - for testing against web
+    // Return a dev user in development mode - for testing against web without Easy Auth in front
     logger.warn("Using a development user based on AUTH_DEVELOPMENT_* env variables");
     return {
       name: process.env.AUTH_DEVELOPMENT_NAME ?? testUser.name,
@@ -35,24 +35,20 @@ async function auth(req) {
     };
   }
 
-  const token = await azureAd(authValue);
-  if (!token) {
-    return {};
-  }
+  const identity = await readPrincipal(principalHeader);
 
   const requestor = {};
-  if (token.name) {
-    requestor.name = token.name;
+  if (identity.name) {
+    requestor.name = identity.name;
   }
-  if (token.oid) {
-    requestor.id = token.oid;
+  if (identity.oid) {
+    requestor.id = identity.oid;
   }
-  // Department is fetched with graph, not from access or id token from auth process.
-  if (token.department) {
-    requestor.department = token.department;
+  if (identity.department) {
+    requestor.department = identity.department;
   }
-  if (token.upn) {
-    requestor.email = token.upn;
+  if (identity.upn) {
+    requestor.email = identity.upn;
   }
 
   return requestor;

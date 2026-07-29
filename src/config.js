@@ -1,9 +1,4 @@
 module.exports = {
-  AZUREAD_TOKEN_CONFIG: {
-    jwksUri: process.env.AZUREAD_JWK_URI,
-    issuer: process.env.AZUREAD_ISSUER_URI,
-    audience: process.env.AZUREAD_CLIENTID
-  },
   STORAGE: {
     AZURE_BLOB_CONNECTIONSTRING: process.env.AZURE_BLOB_CONNECTIONSTRING,
     AZURE_BLOB_CONTAINERNAME: process.env.AZURE_BLOB_CONTAINERNAME,
