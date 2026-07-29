@@ -1,7 +1,7 @@
 {
-	"name": "test-func-masseutsendelse",
-	"version": "1.1.3",
-	"description": "",
+	"name": "azf-masseutsendelse-svelte-api",
+	"version": "0.0.1",
+	"description": "Api for masseutsendelse svelte web",
 	"scripts": {
 		"lint": "biome check",
 		"lint:fix": "biome check --write",
