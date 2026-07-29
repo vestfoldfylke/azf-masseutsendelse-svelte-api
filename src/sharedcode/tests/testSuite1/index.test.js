@@ -78,10 +78,12 @@ const bodyDispatch = {
   createdById: "00000000-0000-0000-0000-000000000000",
   createdByEmail: "test@test.no",
   createdByDepartment: "Test department",
+  createdTimestamp: new Date(),
   modifiedBy: "TEST",
   modifiedById: "00000000-0000-0000-0000-000000000000",
   modifiedByEmail: "test@test.no",
   modifiedByDepartment: "Test department",
+  modifiedTimestamp: new Date(),
   approvedBy: "",
   approvedById: "",
   approvedByEmail: "test@test.no",
@@ -155,6 +157,7 @@ const bodyDispatchApproved = {
   createdById: "00000000-0000-0000-0000-000000000000",
   createdByEmail: "test@test.no",
   createdByDepartment: "Test department",
+  createdTimestamp: new Date(),
   modifiedTimestamp: new Date(),
   modifiedBy: "TEST",
   modifiedById: "00000000-0000-0000-0000-000000000000",
@@ -227,6 +230,7 @@ const bodyDispatchNoTemplateNoAttachment = {
   createdById: "00000000-0000-0000-0000-000000000000",
   createdByEmail: "test@test.no",
   createdByDepartment: "Test department",
+  createdTimestamp: new Date(),
   modifiedTimestamp: new Date(),
   modifiedBy: "TEST",
   modifiedById: "00000000-0000-0000-0000-000000000000",
@@ -299,6 +303,7 @@ const bodyDispatchNoTemplate = {
   createdById: "00000000-0000-0000-0000-000000000000",
   createdByEmail: "test@test.no",
   createdByDepartment: "Test department",
+  createdTimestamp: new Date(),
   modifiedTimestamp: new Date(),
   modifiedBy: "TEST",
   modifiedById: "00000000-0000-0000-0000-000000000000",
@@ -376,6 +381,7 @@ const bodyDispatchNoAttachment = {
   createdById: "00000000-0000-0000-0000-000000000000",
   createdByEmail: "test@test.no",
   createdByDepartment: "Test department",
+  createdTimestamp: new Date(),
   modifiedTimestamp: new Date(),
   modifiedBy: "TEST",
   modifiedById: "00000000-0000-0000-0000-000000000000",
@@ -392,7 +398,9 @@ const bodyTemplates = {
   name: "Jest test",
   description: "jest testing",
   documentDefinitionId: "asd123e1",
-  template: "noe"
+  template: "noe",
+  createdTimestamp: new Date(),
+  modifiedTimestamp: new Date()
 };
 
 // Variables
