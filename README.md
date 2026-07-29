@@ -42,6 +42,11 @@ API used to by masseutsendelse-web to communicate with various systems and APIs.
 | GRAPH_SCOPE                   | Graph scope                                                                                                   | https://graph.microsoft.com/.default                                                                             |
 | GRAPH_URL                     | Graph url                                                                                                     | https://graph.microsoft.com/v1.0                                                                                 |
 | BYPASS_REGISTRATION_THRESHOLD | Set to true to allow dispatching same day as creation, set to false or omit to enforce registration threshold | true                                                                                                             |
+| AUTH_DEVELOPMENT_NAME         | Used to mock a user when running in development (NODE_ENV)                                                    | Bjarne Betjent                                                                                                   |
+| AUTH_DEVELOPMENT_ID           | Used to mock a user when running in development (NODE_ENV)                                                    | guid                                                                                                             |
+| AUTH_DEVELOPMENT_DEPARTMENT   | Used to mock a user when running in development (NODE_ENV)                                                    | Sesam stasjon                                                                                                    |
+| AUTH_DEVELOPMENT_EMAIL        | Used to mock a user when running in development (NODE_ENV)                                                    | bjarne.betjent@sesamstasjon.no                                                                                   |
+| NODE_ENV                      | When set to "development", a mock user is used instead of the user from the actual token                      | `development` or `production`                                                                                    |
 
 
 ## Endpoints GET
@@ -184,7 +189,9 @@ Will return the dispatch object with the id provided. It will only return one si
         "approvedBy": "Demo Demosen",
         "approvedByEmail": "demo.demosen@vtfk.no",
         "approvedById": "ea35b300-ee14-5fch-b4a0-a03e7dc91337",
-        "approvedTimestamp": "2022-02-18T09:17:31.004Z"
+        "approvedTimestamp": "2022-02-18T09:17:31.004Z",
+        "inProgressTimestamp": "2022-02-19T12:00:01.004Z",
+        "completedTimestamp": "2022-02-19T12:40:01.004Z"
     }
 ]
 ```
@@ -1156,8 +1163,8 @@ This endpoint is used to post a new template to the mongoDB
 
 This endpoint is used to edit a given dispatch.
 
-If status='approved' you're not allowed to edit anything except the status of the dispatch object. 
-If status='completed' you're not allowed to edit the dispatch object at all. 
+If status='approved' you're not allowed to edit anything except the status of the dispatch object.
+If status='completed' || 'inprogress' you're not allowed to edit the dispatch object at all.
 
 Fields that cannot be edited.
 - 'validatedArchivenumber' 
@@ -1169,6 +1176,8 @@ Fields that cannot be edited.
 - 'modifiedBy'
 - 'modifiedById'
 - 'modifiedByDepartment'
+- 'inProgressTimestamp'
+- 'completedTimestamp'
 
 **`PUT /dispatches/{id}/complete`**
 
