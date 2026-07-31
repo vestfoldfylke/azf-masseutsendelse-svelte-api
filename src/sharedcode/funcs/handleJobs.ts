@@ -184,7 +184,7 @@ const handleCreateCaseDocument = async (jobId: string, jobName: string, jobTasks
 
     if (!currentCase) {
       // noinspection ExceptionCaughtLocallyJS - Intentional
-      throw new Error(`createCaseDocument task not found for Job ${jobName}`)
+      throw new Error(`createCaseDocument task not found for Job ${jobName}`);
     }
 
     if (Number.isInteger(currentCase.retry)) {
@@ -240,7 +240,7 @@ const handleCreateCaseDocument = async (jobId: string, jobName: string, jobTasks
 
     logger.info("Case document created");
     currentCase.response = caseDoc;
-    currentCase.status = "completed"
+    currentCase.status = "completed";
 
     for (const dispatch of issueDispatchCopy) {
       dispatch.dataMapping = caseDoc.DocumentNumber;
@@ -270,7 +270,7 @@ const handleCreateCaseDocument = async (jobId: string, jobName: string, jobTasks
 
       const filter = { _id: jobId };
       const update = {
-        "tasks.createCaseDocument": [currentCase],
+        "tasks.createCaseDocument": [currentCase]
       };
       logger.info("Updating job with id: {JobId}", jobId);
       await Jobs.findOneAndUpdate(filter, update, {
@@ -676,7 +676,7 @@ export const handleJobs = async (context: InvocationContext, runStatus: string):
 
     const firstTaskEntry: Record<string, JobTask> | undefined = taskArr[0];
     if (!firstTaskEntry) {
-      logger.error("First task entry not found of a total of {TaskCount} tasks. Aborting handling", taskArr.length)
+      logger.error("First task entry not found of a total of {TaskCount} tasks. Aborting handling", taskArr.length);
       return response(taskArr, 404);
     }
 
