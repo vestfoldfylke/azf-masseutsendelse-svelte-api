@@ -6,3 +6,4 @@ local.settings.json
 prod.json
 test
 tsconfig.json
+src

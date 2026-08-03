@@ -10,7 +10,7 @@ API used to by masseutsendelse-web to communicate with various systems and APIs.
 ## Setup project
 1. Clone/Fork the project
 2. run **npm i** to install project dependencies
-3. Setup the environment variables in **local.settings.json**
+3. Set up the environment variables in **local.settings.json**
 4. run **npm test** to test the code
 5. run **func start** to start dev environment locally
 6. Deploy to Azure
@@ -159,7 +159,7 @@ Will return the dispatch object with the id provided. It will only return one si
             "documentDefinitionId": "brevmal",
             "data": { //Content of the template
                 "tittel": "Demo",
-                "beskrivelse av prosjekte": "Demo",
+                "beskrivelse av prosjektet": "Demo",
                 "fremdrift": "Demo",
                 "Regelverk": "Demo"
             },
@@ -470,7 +470,7 @@ This endpoint is used to post a new dispatch object to the mongoDB.
       "data": {
          //Data from the template
          "tittel": "Demo",
-         "beskrivelse av prosjekte": "Demo",
+         "beskrivelse av prosjektet": "Demo",
          "fremdrift": "Demo",
          "Regelverk": " § Demo"
       }
