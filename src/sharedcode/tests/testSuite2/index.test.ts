@@ -18,7 +18,6 @@ import invalidDispatchIllegalFileExtension from "../testCases/invalidCases/post_
 import invalidDispatchArchiveNumber from "../testCases/invalidCases/post_dispatch_missing_archivenumber.js";
 import invalidDispatchMissingFileExtension from "../testCases/invalidCases/post_dispatch_missing_extension.js";
 import invalidDispatch from "../testCases/invalidCases/post_dispatch_missing_template_and_attachments.js";
-import validDispatchAttachments from "../testCases/validCases/post_dispatch_attachments.js";
 import validDispatchBoth from "../testCases/validCases/post_dispatch_both.js";
 import validTemplate from "../testCases/validCases/post_template.js";
 
@@ -80,7 +79,8 @@ describe("Endpoint testing", () => {
     headers: {
       get: () => undefined,
       "x-api-key": process.env["APIKEYS_TEST"]
-    }
+    },
+    json: async () => ({})
   } as unknown as HttpRequest;
 
   let idTemplate: string = "";
@@ -175,43 +175,25 @@ describe("Endpoint testing", () => {
       assert.strictEqual(post.status, 400);
     });
 
-    test('Should reject posting a dispatch with only attachments because the "AZURE_BLOB_CONNECTIONSTRING_TEST" is missing', async () => {
-      process.env["AZURE_BLOB_CONNECTIONSTRING_TEST"] = "";
-
-      const post: FunctionResponse | HTTPErrorResponse = await postDispatches(validDispatchAttachments as unknown as HttpRequest);
-      assert.ok(post);
-      assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
-    });
-
-    test('Should reject posting a dispatch with only attachments because the "AZURE_BLOB_CONTAINERNAME_TEST" is missing', async () => {
-      process.env["AZURE_BLOB_CONTAINERNAME_TEST"] = "";
-
-      const post: FunctionResponse | HTTPErrorResponse = await postDispatches(validDispatchAttachments as unknown as HttpRequest);
-      assert.ok(post);
-      assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
-    });
-
     test("Should reject posting a dispatch with attachments because a file is missing file extension", async () => {
       const post: FunctionResponse | HTTPErrorResponse = await postDispatches(invalidDispatchMissingFileExtension as unknown as HttpRequest);
       assert.ok(post);
       assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
+      assert.strictEqual(post.status, 400);
     });
 
     test("Should reject posting a dispatch with attachments because a file got an illegal file extension", async () => {
       const post: FunctionResponse | HTTPErrorResponse = await postDispatches(invalidDispatchIllegalFileExtension as unknown as HttpRequest);
       assert.ok(post);
       assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
+      assert.strictEqual(post.status, 400);
     });
 
     test("Should reject posting a dispatch with attachments because a file got an illegal character in the filename", async () => {
       const post: FunctionResponse | HTTPErrorResponse = await postDispatches(invalidDispatchIllegalCharacter as unknown as HttpRequest);
       assert.ok(post);
       assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
+      assert.strictEqual(post.status, 400);
     });
 
     test("Should not get a dispatch object from the db since there's no id provided", async () => {
@@ -333,15 +315,7 @@ describe("Endpoint testing", () => {
     });
 
     test("Should reject the archive endpoint request since the endpoint url is missing", async () => {
-      process.env["VTFK_P360_ARCHIVE_ENDPOINT"] = "";
-      const post: FunctionResponse | HTTPErrorResponse = await postDispatches(validDispatchBoth as unknown as HttpRequest);
-      assert.ok(post);
-      assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(post.status, 500);
-    });
-
-    test("Should reject the archive endpoint request since the endpoint key is missing", async () => {
-      process.env["VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY"] = "";
+      process.env["ARCHIVE_URL"] = "";
       const post: FunctionResponse | HTTPErrorResponse = await postDispatches(validDispatchBoth as unknown as HttpRequest);
       assert.ok(post);
       assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);

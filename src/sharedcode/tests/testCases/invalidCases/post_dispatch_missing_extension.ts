@@ -62,7 +62,7 @@ const testCase: MockRequest = {
         documentDefinitionId: "brevmal",
         data: {
           tittel: "Parallel test",
-          "beskrivelse av prosjekte": "Parallel test",
+          "beskrivelse av prosjektet": "Parallel test",
           fremdrift: "Parallel test",
           Regelverk: "Parallel test"
         },

@@ -51,7 +51,7 @@ const testCase: MockRequest = {
       title: "Parallel test",
       projectnumber: "22/00009",
       archivenumber: "22/00009",
-      validatedArchivenumber: "22/00009",
+      validatedArchivenumber: "",
       archiveUrl: "https://360test.vtfk.no//locator.aspx?name=DMS.Case.Details.Simplified.2&recno=234483&module=Case&subtype=2",
       status: "completed",
       template: {
@@ -62,7 +62,7 @@ const testCase: MockRequest = {
         documentDefinitionId: "brevmal",
         data: {
           tittel: "Parallel test",
-          "beskrivelse av prosjekte": "Parallel test",
+          "beskrivelse av prosjektet": "Parallel test",
           fremdrift: "Parallel test",
           Regelverk: "Parallel test"
         },
