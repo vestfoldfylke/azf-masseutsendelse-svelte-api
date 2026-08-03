@@ -1,3 +1,4 @@
+import { extname } from "node:path";
 import { app, type HttpRequest } from "@azure/functions";
 import { logger } from "@vestfoldfylke/loglady";
 import allowedExtensions from "../sharedcode/allowedExtensions.json" with { type: "json" };
@@ -88,14 +89,14 @@ export const editDispatches = async (req: HttpRequest): Promise<FunctionResponse
 
     if (requestBody.attachments && Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0) {
       requestBody.attachments.forEach((i: DispatchAttachment) => {
-        const split: string[] = i.name.split(".");
-        if (split.length === 1) {
+        const fileExtension: string = extname(i.name).slice(1);
+
+        if (!fileExtension) {
           throw new HTTPError(400, "All filenames must have an extension");
         }
 
-        const extension: string = split[split.length - 1] ?? "";
-        if (!allowedExtensions.includes(extension.toLowerCase())) {
-          throw new HTTPError(400, `The file extension ${extension} is not allowed`);
+        if (!allowedExtensions.includes(fileExtension.toLowerCase())) {
+          throw new HTTPError(400, `The file extension ${fileExtension} is not allowed`);
         }
 
         UNALLOWED_PATH_CHARACTERS.forEach((char: string) => {

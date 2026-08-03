@@ -1,3 +1,4 @@
+import { extname } from "node:path";
 import { app, type HttpRequest } from "@azure/functions";
 import { logger } from "@vestfoldfylke/loglady";
 import { ObjectId } from "mongodb";
@@ -53,22 +54,22 @@ export const postDispatches = async (req: HttpRequest): Promise<FunctionResponse
 
     if (Array.isArray(requestBody.attachments)) {
       for (const file of requestBody.attachments) {
-        const split: string[] = file.name.split(".");
-        if (split.length === 1) {
+        if (!file.name) {
+          file.name = file._id ?? "";
+        }
+
+        const fileExtension: string = extname(file.name).slice(1);
+
+        if (!fileExtension) {
           return new HTTPError(400, "All filenames must have an extension").toHTTPResponse();
         }
 
-        const extension: string = split[split.length - 1] ?? "";
-        if (!allowedExtensions.includes(extension.toLowerCase())) {
-          return new HTTPError(400, `The file extension ${extension} is not allowed`).toHTTPResponse();
+        if (!allowedExtensions.includes(fileExtension.toLowerCase())) {
+          return new HTTPError(400, `The file extension ${fileExtension} is not allowed`).toHTTPResponse();
         }
 
         if (file.name?.includes("/")) {
           return new HTTPError(400, 'Illegal character in filename, "/" is not allowed.').toHTTPResponse();
-        }
-
-        if (!file.name) {
-          file.name = file._id ?? "";
         }
 
         if (process.env.NODE_ENV !== "test" && file.data) {
