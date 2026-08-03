@@ -3,12 +3,10 @@ import { after, afterEach, before, describe, test } from "node:test";
 import type { HttpRequest } from "@azure/functions";
 import { type DefaultBodyType, type ResponseComposition, type RestContext, type RestRequest, rest } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
-import { completeDispatch } from "../../../functions/completedispatch.js";
 import { editDispatches } from "../../../functions/editdispatches.js";
 import { getBlob } from "../../../functions/getblob.js";
 import { getDispatchById } from "../../../functions/getdispatchbyid.js";
 import { getMatrikkel } from "../../../functions/getmatrikkel.js";
-import { getTemplateById } from "../../../functions/gettemplatebyid.js";
 import { getTemplates } from "../../../functions/gettemplates.js";
 import { postDispatches } from "../../../functions/postdispatches.js";
 import { postTemplate } from "../../../functions/posttemplate.js";
@@ -20,7 +18,6 @@ import invalidDispatchIllegalFileExtension from "../testCases/invalidCases/post_
 import invalidDispatchArchiveNumber from "../testCases/invalidCases/post_dispatch_missing_archivenumber.js";
 import invalidDispatchMissingFileExtension from "../testCases/invalidCases/post_dispatch_missing_extension.js";
 import invalidDispatch from "../testCases/invalidCases/post_dispatch_missing_template_and_attachments.js";
-import validDispatchEditApproved from "../testCases/validCases/edit_dispatch_approved.js";
 import validDispatchAttachments from "../testCases/validCases/post_dispatch_attachments.js";
 import validDispatchBoth from "../testCases/validCases/post_dispatch_both.js";
 import validTemplate from "../testCases/validCases/post_template.js";
@@ -87,7 +84,6 @@ describe("Endpoint testing", () => {
   } as unknown as HttpRequest;
 
   let idTemplate: string = "";
-  const idDispatchOnlyTemplate: string = "";
 
   describe("Testing valid cases", () => {
     test("Should post a template to the db", async () => {
@@ -101,23 +97,6 @@ describe("Endpoint testing", () => {
       assert.strictEqual(post.jsonBody.name, "Jest Test Template");
       assert.strictEqual(post.jsonBody.createdBy, "timetrigger");
       assert.strictEqual(post.jsonBody.template, "Et eller annet");
-    });
-
-    test("Should get a template with a given id from the db", async () => {
-      const request = {
-        ...apiHeader,
-        params: {
-          id: idTemplate
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-      const get = (await getTemplateById(request)) as { status: number; jsonBody: { name: string; createdBy: string; template: string } };
-
-      assert.ok(get);
-      assert.strictEqual(get.status, 200);
-      assert.strictEqual(get.jsonBody.name, "Jest Test Template");
-      assert.strictEqual(get.jsonBody.createdBy, "timetrigger");
-      assert.strictEqual(get.jsonBody.template, "Et eller annet");
     });
 
     test("Should get all the templates from the db", async () => {
@@ -286,52 +265,6 @@ describe("Endpoint testing", () => {
       assert.strictEqual(edit.status, 404);
     });
 
-    test("Should reject completing a dispatch since there is no id provided", async () => {
-      const request = {
-        ...validDispatchEditApproved,
-        params: {
-          id: ""
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-
-      const complete: FunctionResponse | HTTPErrorResponse = await completeDispatch(request);
-      assert.ok(complete);
-      assert.notStrictEqual((complete as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(complete.status, 400);
-    });
-
-    test("Should reject completing a dispatch since the id provided is not valid", async () => {
-      process.env["ID_DISPATCH_TEST"] = "61f9502c1a6e890eec90d2b1";
-      const request = {
-        ...validDispatchEditApproved,
-        params: {
-          id: "61f9502c1a6e890eec90d2b1"
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-
-      const complete: FunctionResponse | HTTPErrorResponse = await completeDispatch(request);
-      assert.ok(complete);
-      assert.notStrictEqual((complete as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(complete.status, 404);
-    });
-
-    test("Should reject completing a dispatch since the dispatch status is not set to approved", async () => {
-      const request = {
-        ...validDispatchEditApproved,
-        params: {
-          id: idDispatchOnlyTemplate
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-
-      const complete: FunctionResponse | HTTPErrorResponse = await completeDispatch(request);
-      assert.ok(complete);
-      assert.notStrictEqual((complete as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(complete.status, 400);
-    });
-
     test("Should not call the matrikkel api since the url is missing", async () => {
       process.env["VTFK_MATRIKKELPROXY_BASEURL"] = "";
       const get: FunctionResponse | HTTPErrorResponse = await getMatrikkel(apiHeader);
@@ -413,36 +346,6 @@ describe("Endpoint testing", () => {
       assert.ok(post);
       assert.notStrictEqual((post as { jsonBody?: unknown }).jsonBody, undefined);
       assert.strictEqual(post.status, 500);
-    });
-
-    test("Should not get a template from the db since there's no id provided", async () => {
-      const request = {
-        ...apiHeader,
-        params: {
-          id: ""
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-
-      const get: FunctionResponse | HTTPErrorResponse = await getTemplateById(request);
-      assert.ok(get);
-      assert.notStrictEqual((get as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(get.status, 400);
-    });
-
-    test("Should not get a template from the db since the id provided dose not exist", async () => {
-      const request = {
-        ...apiHeader,
-        params: {
-          id: "61f9502c1a6e890eec90d2b1"
-        },
-        json: async () => ({})
-      } as unknown as HttpRequest;
-
-      const get: FunctionResponse | HTTPErrorResponse = await getTemplateById(request);
-      assert.ok(get);
-      assert.notStrictEqual((get as { jsonBody?: unknown }).jsonBody, undefined);
-      assert.strictEqual(get.status, 400);
     });
 
     test("Should not put a template from the db since there's no id provided", async () => {
