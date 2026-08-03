@@ -1,6 +1,6 @@
 {
 	"name": "azf-masseutsendelse-svelte-api",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "Api for masseutsendelse svelte web",
 	"type": "module",
 	"scripts": {
