@@ -270,7 +270,12 @@ export const getReadyDispatchesV2 = async (_req: HttpRequest, context: Invocatio
     });
 
     if (dispatchFiles.length > 1) {
-      for (const file of dispatchFiles) {
+      for (let i: number = 1; i < dispatchFiles.length; i++) {
+        const file: PreparedDispatchFile | undefined = dispatchFiles[i];
+        if (!file) {
+          throw new Error(`Dispatch file at index ${i} is undefined in list with ${dispatchFiles.length} files. Dispatch with DispatchId ${dispatchId} will NOT be made ready!`);
+        }
+
         logger.info("Creating the archive uploadDocuments task, for attachment: {FileTitle} ({FileFormat}), with DispatchId: {DispatchId}", file.title, file.format, dispatchId);
         dispatchJob.tasks.uploadAttachments.push({
           dataMapping: "parameter.documentNumber=DocumentNumber",
