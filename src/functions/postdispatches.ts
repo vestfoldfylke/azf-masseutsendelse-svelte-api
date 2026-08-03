@@ -1,11 +1,10 @@
 import { app, type HttpRequest } from "@azure/functions";
 import { logger } from "@vestfoldfylke/loglady";
-import * as blobClient from "@vtfk/azure-blob-client";
 import { ObjectId } from "mongodb";
-import { STORAGE } from "../config.js";
 import allowedExtensions from "../sharedcode/allowedExtensions.json" with { type: "json" };
 import { auth } from "../sharedcode/auth/auth.js";
 import getDb from "../sharedcode/connections/masseutsendelseDB.js";
+import { saveBlob, UNALLOWED_PATH_CHARACTERS } from "../sharedcode/helpers/blob.js";
 import Dispatches from "../sharedcode/models/dispatches.js";
 import { errorResponse, response } from "../sharedcode/response/response-handler.js";
 import { validate } from "../sharedcode/validators/dispatches.js";
@@ -39,32 +38,11 @@ export const postDispatches = async (req: HttpRequest): Promise<FunctionResponse
 
     await getDb();
 
-    if (process.env.NODE_ENV === "test") {
-      console.log("This is a test, uploading to blob is skipped. Any code inside the else statement will not be tested!");
-      if (requestBody.attachments && Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0) {
-        if (!process.env.AZURE_BLOB_CONNECTIONSTRING_TEST || !process.env.AZURE_BLOB_CONTAINERNAME_TEST) {
-          return new HTTPError(500, "Cannot upload attachments when azure blob storage is not configured").toHTTPResponse();
-        }
-
-        for (const blob of requestBody.attachments) {
-          for (const char of blobClient.unallowedPathCharacters) {
-            if (blob.name.includes(char)) {
-              return new HTTPError(400, `${blob.name} contains the illegal character ${char}`).toHTTPResponse();
-            }
-          }
-        }
-      }
-    } else {
-      if (requestBody.attachments && Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0) {
-        if (!STORAGE.AZURE_BLOB_CONNECTIONSTRING || !STORAGE.AZURE_BLOB_CONTAINERNAME) {
-          return new HTTPError(500, "Cannot upload attachments when azure blob storage is not configured").toHTTPResponse();
-        }
-
-        for (const blob of requestBody.attachments) {
-          for (const char of blobClient.unallowedPathCharacters) {
-            if (blob.name.includes(char)) {
-              return new HTTPError(400, `${blob.name} contains the illegal character ${char}`).toHTTPResponse();
-            }
+    if (requestBody.attachments && Array.isArray(requestBody.attachments) && requestBody.attachments.length > 0) {
+      for (const blob of requestBody.attachments) {
+        for (const char of UNALLOWED_PATH_CHARACTERS) {
+          if (blob.name.includes(char)) {
+            return new HTTPError(400, `${blob.name} contains the illegal character ${char}`).toHTTPResponse();
           }
         }
       }
@@ -94,7 +72,7 @@ export const postDispatches = async (req: HttpRequest): Promise<FunctionResponse
         }
 
         if (process.env.NODE_ENV !== "test" && file.data) {
-          await blobClient.save(`${String(requestBody._id)}/${file.name}`, file.data);
+          await saveBlob(`${String(requestBody._id)}/${file.name}`, file.data);
         }
       }
     }

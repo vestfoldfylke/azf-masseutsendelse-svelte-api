@@ -1,7 +1,6 @@
 import type { InvocationContext } from "@azure/functions";
+import type { BlobStorageItem } from "@vestfoldfylke/azure-blob-client/dist/types/BlobStorageClient.type.js";
 import { logger } from "@vestfoldfylke/loglady";
-import type { BlobFile } from "@vtfk/azure-blob-client";
-import * as blobClient from "@vtfk/azure-blob-client"; // TODO: Remove in favor of @vestfoldfylke/azure-blob-client
 import type { ArchiveAttachment } from "../../types/archive.js";
 import type { DispatchDocument } from "../../types/dispatches.js";
 import type { CreateCaseDocumentTask, CreateStatisticsTask, IssueDispatchTask, JobDocument, JobTask, SyncRecipientTask, UploadAttachmentTask } from "../../types/jobs.js";
@@ -10,6 +9,7 @@ import type { StatisticsResult } from "../../types/statistics.js";
 import getDb from "../connections/masseutsendelseDB.js";
 import { alertTeams } from "../helpers/alertTeams.js";
 import { addAttachment, createCaseDocument, dispatchDocuments, syncRecipient } from "../helpers/archive.js";
+import { getBlob } from "../helpers/blob.js";
 import { createStatistics } from "../helpers/statistics.js";
 import Dispatches from "../models/dispatches.js";
 import Jobs from "../models/jobs.js";
@@ -54,7 +54,7 @@ const resolveAttachmentBase64 = async (attachment: AttachmentPayload | undefined
     throw new Error("Attachment is missing both base64 and blobPath");
   }
 
-  const file: BlobFile | undefined = await blobClient.get(attachment.blobPath);
+  const file: BlobStorageItem | undefined = await getBlob(attachment.blobPath);
   if (!file?.data) {
     throw new Error(`No blob data found for ${attachment.blobPath}`);
   }

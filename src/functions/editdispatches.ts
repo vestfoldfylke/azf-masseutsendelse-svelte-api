@@ -1,9 +1,9 @@
 import { app, type HttpRequest } from "@azure/functions";
 import { logger } from "@vestfoldfylke/loglady";
-import * as blobClient from "@vtfk/azure-blob-client";
 import allowedExtensions from "../sharedcode/allowedExtensions.json" with { type: "json" };
 import { auth } from "../sharedcode/auth/auth.js";
 import getDb from "../sharedcode/connections/masseutsendelseDB.js";
+import { removeBlob, saveBlob, UNALLOWED_PATH_CHARACTERS } from "../sharedcode/helpers/blob.js";
 import { getDiff } from "../sharedcode/helpers/get-diff.js";
 import Dispatches from "../sharedcode/models/dispatches.js";
 import { errorResponse, response } from "../sharedcode/response/response-handler.js";
@@ -98,7 +98,7 @@ export const editDispatches = async (req: HttpRequest): Promise<FunctionResponse
           throw new HTTPError(400, `The file extension ${extension} is not allowed`);
         }
 
-        blobClient.unallowedPathCharacters.forEach((char: string) => {
+        UNALLOWED_PATH_CHARACTERS.forEach((char: string) => {
           if (i.name.includes(char)) {
             throw new HTTPError(400, `${i.name} cannot contain illegal character ${char}`);
           }
@@ -108,22 +108,22 @@ export const editDispatches = async (req: HttpRequest): Promise<FunctionResponse
 
     const updatedDispatch: DispatchDocument | null = await Dispatches.findByIdAndUpdate(id, { ...requestBody, $unset: unsets }, { returnDocument: "after" });
 
-    const existingNames: string[] = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
-    const requestNames: string[] = requestBody.attachments ? requestBody.attachments.map((i) => i.name) : [];
+    if (process.env.NODE_ENV !== "test") {
+      const existingNames: string[] = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
+      const requestNames: string[] = requestBody.attachments ? requestBody.attachments.map((i) => i.name) : [];
 
-    if (requestBody.attachments) {
-      const attachmentsToAdd: DispatchAttachment[] = requestBody.attachments.filter((i: DispatchAttachment) => !existingNames.includes(i.name) || i.data);
-      const attachmentsToRemove: string[] = existingNames.filter((i: string) => !requestNames.includes(i));
+      if (requestBody.attachments) {
+        const attachmentsToAdd: DispatchAttachment[] = requestBody.attachments.filter((i: DispatchAttachment) => !existingNames.includes(i.name) || i.data);
+        const attachmentsToRemove: string[] = existingNames.filter((i: string) => !requestNames.includes(i));
 
-      if (process.env.NODE_ENV !== "test") {
         for (const i of attachmentsToAdd) {
           if (i.data) {
-            await blobClient.save(`${id}/${i.name}`, i.data);
+            await saveBlob(`${id}/${i.name}`, i.data);
           }
         }
 
         for (const i of attachmentsToRemove) {
-          await blobClient.remove(`${id}/${i}`);
+          await removeBlob(`${id}/${i}`);
         }
       }
     }

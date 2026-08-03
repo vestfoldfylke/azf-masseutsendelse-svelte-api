@@ -1,8 +1,8 @@
 import { app, type HttpRequest } from "@azure/functions";
+import type { BlobStorageItem } from "@vestfoldfylke/azure-blob-client/dist/types/BlobStorageClient.type.js";
 import { logger } from "@vestfoldfylke/loglady";
-import type { BlobFile } from "@vtfk/azure-blob-client";
-import * as blobClient from "@vtfk/azure-blob-client";
 import { auth } from "../sharedcode/auth/auth.js";
+import { getBlob as getStorgeBlob } from "../sharedcode/helpers/blob.js";
 import { errorResponse, response } from "../sharedcode/response/response-handler.js";
 import HTTPError from "../sharedcode/vtfk-errors/httperror.js";
 import type { FunctionResponse, HTTPErrorResponse } from "../types/response.js";
@@ -19,7 +19,7 @@ export const getBlob = async (req: HttpRequest): Promise<FunctionResponse | HTTP
     }
 
     if (process.env.NODE_ENV !== "test") {
-      const file: BlobFile | undefined = await blobClient.get(`${req.params.id}/${req.params.name}`);
+      const file: BlobStorageItem | undefined = await getStorgeBlob(`${req.params.id}/${req.params.name}`);
       if (!file?.data) {
         logger.error("No files found for DispatchId: {DispatchId} and Filename: {Filename}", req.params.id, req.params.name);
         return new HTTPError(404, "No files found, check if you passed the right filename and/or the right dispatchId").toHTTPResponse();
