@@ -1,4 +1,3 @@
-// TODO: Update @vestfoldfylke/azure-blob-client to v2.0.0 when it is released
 import { BlobStorageClient } from "@vestfoldfylke/azure-blob-client";
 import type { BlobStorageItem } from "@vestfoldfylke/azure-blob-client/dist/types/BlobStorageClient.type.js";
 import { STORAGE } from "../../config.js";
