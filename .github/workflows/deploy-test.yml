@@ -1,0 +1,19 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js project to Azure Function App - TEST
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    uses: vestfoldfylke/shared/.github/workflows/deploy-az-app-service-node.yml@main
+    with:
+      azure_appname: 'vfkdlzmasseutmseutsapi'
+      azure_functionapp_package_path: '.'
+    secrets:
+      azure_publishprofile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DEV }}
