@@ -175,12 +175,10 @@ const dispatchesSchema = new mongoose.Schema({
         required: true
       }
     },
-    polygons: [
-      {
-        type: polygonSchema,
-        validate: [(val: unknown[]) => val.length > 0]
-      }
-    ]
+    polygons: {
+      type: [polygonSchema],
+      validate: [(val: unknown[]) => val.length > 0, "polygons.polygons must contain at least one polygon"]
+    }
   },
   e18Id: {
     type: String

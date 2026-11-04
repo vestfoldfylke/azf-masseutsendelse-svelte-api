@@ -1,13 +1,17 @@
 # azf-masseutsendelse-api
+
 API used to by masseutsendelse-web to communicate with various systems and APIs.
 
 # Usage
+
 ## Setup dependencies
+
 1. Create an Azure App Registration
 2. Add custom claim for **department** attribute for the app registration
    https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-claims-mapping#include-the-employeeid-and-tenantcountry-as-claims-in-tokens
 3. Create an MongoDB database
 ## Setup project
+
 1. Clone/Fork the project
 2. run **npm i** to install project dependencies
 3. Set up the environment variables in **local.settings.json**
@@ -18,7 +22,7 @@ API used to by masseutsendelse-web to communicate with various systems and APIs.
 ## Environment variables
 
 | Variable                      | Description                                                                                                   | Example                                                                                                          |
-|-------------------------------|---------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | MONGODB_CONNECTIONSTRING      | The connecting string for a MongoDB database                                                                  | mongodb+srv://**[account]**:**[password]**@[clustername]/masseutsendelse?retryWrites=true&w=majority             |
 | AZURE_BLOB_CONNECTIONSTRING   | The connectionstring for Azure Storage account blob                                                           | DefaultEndpointsProtocol=https;AccountName=[AccountName];AccountKey=[AccountKey];EndpointSuffix=core.windows.net |
 | AZURE_BLOB_CONTAINERNAME      | The container name of the blob storage                                                                        | blobs                                                                                                            |
@@ -53,7 +57,7 @@ API used to by masseutsendelse-web to communicate with various systems and APIs.
 
 **`GET /dispatches`**
 
-Will return all the dispatch objects from the database, will return empty array if there's no dispatch objects found. 
+Will return all the dispatch objects from the database, will return empty array if there's no dispatch objects found.
 
 **`GET /dispatches/{id}`**
 
@@ -202,9 +206,10 @@ Will return all the dispatches with status='approved' and if the dispatch has pa
 It will also create the E18 Job, which will include any attachments and templates used and the receivers of the documents. The E18 job will consist of an array of tasks needed to be performed by E18.
 
 For documentation on E18:
- - https://github.com/vtfk/E18-api
- 
+- https://github.com/vtfk/E18-api
+
 ### Example readyDisptaches
+
 ```json5
 [
     {
@@ -338,66 +343,57 @@ For Documentation on the matrikkel-proxy:
 
 ### Example /matrikkel/{endpoint}
 
-
-```json 
+```json
 [
-    {
-       "_type":"FysiskPerson",
-       "_namespace":"https://matrikkel.statkart.no/matrikkelapi/wsapi/v1/domain/person",
-       "id":{
-          "_type":"FysiskPersonId",
-          "_namespace":"https://matrikkel.statkart.no/matrikkelapi/wsapi/v1/domain/person",
-          "value":"1"
-       },
-       "oppdateringsdato":"2021-02-28T03:08:55.344000000+01:00",
-       "versjonId":"1",
-       "oppdatertAv":"eksternregister1",
-       "versjon":"1",
-       "nummer":"01010101010",
-       "navn":"DEMO DEMOSEN",
-       "postadresse":{
-          "adresselinje2":"Demo vegen 3",
-          "adresselinje3":"1337 Demo",
-          "postnummeromradeId":"101010101",
-          "landKodeId":"0000"
-       },
-       "uuid":{
-          "navnerom":"https://data.geonorge.no/matrikkel",
-          "uuid":"8f6420fd-3a70-5da4-aa11-b925s8bbec6b"
-       },
-       "etternavn":"DEMOSEN",
-       "fornavn":"DEMO",
-       "spesifisertRegTypeKodeId":"10",
-       "bostedsadresse":{
-          "kommunenummer":"1337",
-          "adressekode":"0000",
-          "husnummer":"1",
-          "gardsnummer":"0",
-          "bruksnummer":"0",
-          "festenummer":"0",
-          "undernummer":"0",
-          "postnummer":"1337"
-       },
-       "personStatusKodeId":"1",
-       "dsf":[
-          "Object"
-       ],
-       "Statsborgerskap":[
-          "Object"
-       ],
-       "KJONN":"K",
-       "FODKNR":"0101",
-       "FODK":"Demo",
-       "FODS":"Demo",
-       "FNR":"01010101010",
-       "bostedsAdresse":[
-          "Object"
-       ],
-       "postAdresse":[
-          "Object"
-       ],
-       "personNavn":"Demo Demosen"
-    }
+  {
+    "_type": "FysiskPerson",
+    "_namespace": "https://matrikkel.statkart.no/matrikkelapi/wsapi/v1/domain/person",
+    "id": {
+      "_type": "FysiskPersonId",
+      "_namespace": "https://matrikkel.statkart.no/matrikkelapi/wsapi/v1/domain/person",
+      "value": "1"
+    },
+    "oppdateringsdato": "2021-02-28T03:08:55.344000000+01:00",
+    "versjonId": "1",
+    "oppdatertAv": "eksternregister1",
+    "versjon": "1",
+    "nummer": "01010101010",
+    "navn": "DEMO DEMOSEN",
+    "postadresse": {
+      "adresselinje2": "Demo vegen 3",
+      "adresselinje3": "1337 Demo",
+      "postnummeromradeId": "101010101",
+      "landKodeId": "0000"
+    },
+    "uuid": {
+      "navnerom": "https://data.geonorge.no/matrikkel",
+      "uuid": "8f6420fd-3a70-5da4-aa11-b925s8bbec6b"
+    },
+    "etternavn": "DEMOSEN",
+    "fornavn": "DEMO",
+    "spesifisertRegTypeKodeId": "10",
+    "bostedsadresse": {
+      "kommunenummer": "1337",
+      "adressekode": "0000",
+      "husnummer": "1",
+      "gardsnummer": "0",
+      "bruksnummer": "0",
+      "festenummer": "0",
+      "undernummer": "0",
+      "postnummer": "1337"
+    },
+    "personStatusKodeId": "1",
+    "dsf": ["Object"],
+    "Statsborgerskap": ["Object"],
+    "KJONN": "K",
+    "FODKNR": "0101",
+    "FODK": "Demo",
+    "FODS": "Demo",
+    "FNR": "01010101010",
+    "bostedsAdresse": ["Object"],
+    "postAdresse": ["Object"],
+    "personNavn": "Demo Demosen"
+  }
 ]
 ```
 
@@ -413,24 +409,24 @@ Will return the template with the id provided. It will only return one single ob
 
 ```json
 [
-    {
-        "_id": "61d84dad786bdf965164c6fc",
-        "name": "Varsel ved oppstart av prosjekt",
-        "description": "Mal for varsling til naboer ved oppstart av nytt prosjekt",
-        "version": 1,
-        "enabled": true, 
-        "documentDefinitionId": "brevmal",
-        "template": "base64",
-        "language": "nb",
-        "createdTimestamp": "2022-01-07T14:25:08.981Z",
-        "createdBy": "Demo",
-        "createdById": "00000000-0000-0000-0000-000000000000",
-        "modifiedTimestamp": "2022-01-27T08:46:01.524Z",
-        "modifiedBy": "Demo Demosen",
-        "modifiedById": "00000000-0000-0000-0000-000000000000",
-        "__v": 0,
-        "modifiedByDepartment": "Teknologi og digitalisering"
-    }
+  {
+    "_id": "61d84dad786bdf965164c6fc",
+    "name": "Varsel ved oppstart av prosjekt",
+    "description": "Mal for varsling til naboer ved oppstart av nytt prosjekt",
+    "version": 1,
+    "enabled": true,
+    "documentDefinitionId": "brevmal",
+    "template": "base64",
+    "language": "nb",
+    "createdTimestamp": "2022-01-07T14:25:08.981Z",
+    "createdBy": "Demo",
+    "createdById": "00000000-0000-0000-0000-000000000000",
+    "modifiedTimestamp": "2022-01-27T08:46:01.524Z",
+    "modifiedBy": "Demo Demosen",
+    "modifiedById": "00000000-0000-0000-0000-000000000000",
+    "__v": 0,
+    "modifiedByDepartment": "Teknologi og digitalisering"
+  }
 ]
 ```
 
@@ -1167,8 +1163,8 @@ If status='approved' you're not allowed to edit anything except the status of th
 If status='completed' || 'inprogress' you're not allowed to edit the dispatch object at all.
 
 Fields that cannot be edited.
-- 'validatedArchivenumber' 
-- 'createdTimestamp' 
+- 'validatedArchivenumber'
+- 'createdTimestamp'
 - 'createdBy'
 - 'createdById'
 - 'createdByDepartment'
@@ -1181,14 +1177,14 @@ Fields that cannot be edited.
 
 **`PUT /dispatches/{id}/complete`**
 
-This endpoint is used to complete a dispatch when the job is posted to E18. The endpoint will set status='completed' and remove all the owners from the object. 
+This endpoint is used to complete a dispatch when the job is posted to E18. The endpoint will set status='completed' and remove all the owners from the object.
 This endpoint is used by test-la-masseutsendelse and prod-la-masseutsendelse.
 
 **`PUT /templates/{id}`**
 
-This endpoint is used to edit a given template. 
+This endpoint is used to edit a given template.
 
-Fields that cannot be edited. 
+Fields that cannot be edited.
 - 'createdTimestamp'
 - 'createdBy'
 - 'createdById'

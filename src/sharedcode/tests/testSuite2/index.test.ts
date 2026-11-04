@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { after, afterEach, before, describe, test } from "node:test";
 import type { HttpRequest } from "@azure/functions";
-import { type DefaultBodyType, type ResponseComposition, type RestContext, type RestRequest, rest } from "msw";
+import { HttpResponse, http } from "msw";
 import { type SetupServer, setupServer } from "msw/node";
 import { editDispatches } from "../../../functions/editdispatches.js";
 import { getBlob } from "../../../functions/getblob.js";
@@ -25,10 +25,9 @@ setupDB();
 
 describe("Endpoint testing", () => {
   const server: SetupServer = setupServer(
-    rest.post("https://api.vtfk.no/pdf/v1/jestTest", (_req: RestRequest, res: ResponseComposition<DefaultBodyType>, ctx: RestContext) => {
-      return res(
-        ctx.status(201),
-        ctx.json({
+    http.post("https://api.vtfk.no/pdf/v1/jestTest", () => {
+      return HttpResponse.json(
+        {
           body: {
             data: {
               tittel: "Parallel test",
@@ -38,24 +37,15 @@ describe("Endpoint testing", () => {
             },
             base64: { pdfBase64: "En pdfbase64" }
           }
-        })
+        },
+        { status: 201 }
       );
     }),
-    rest.post("https://api.vtfk.no/matrikkel/v1/jestTestjestTest", (_req: RestRequest, res: ResponseComposition<DefaultBodyType>, ctx: RestContext) => {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          msg: "Matrikkel api successfully connected"
-        })
-      );
+    http.post("https://api.vtfk.no/matrikkel/v1/jestTestjestTest", () => {
+      return HttpResponse.json({ msg: "Matrikkel api successfully connected" }, { status: 200 });
     }),
-    rest.post("https://api.vtfk.dev/archive/v1/jestTestarchive", (_req: RestRequest, res: ResponseComposition<DefaultBodyType>, ctx: RestContext) => {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          msg: "Archive api successfully connected"
-        })
-      );
+    http.post("https://api.vtfk.dev/archive/v1/jestTestarchive", () => {
+      return HttpResponse.json({ msg: "Archive api successfully connected" }, { status: 200 });
     })
   );
 
