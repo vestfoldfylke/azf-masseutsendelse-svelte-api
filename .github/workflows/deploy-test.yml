@@ -15,5 +15,6 @@ jobs:
     with:
       azure_appname: 'vfkdlzmasseutmseutsapi'
       azure_functionapp_package_path: '.'
+      log_azure_deploy_content: true
     secrets:
       azure_publishprofile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DEV }}
